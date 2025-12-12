@@ -9,7 +9,11 @@ async function bootstrap() {
   const config = app.get(ConfigService);
   
   // Enable validation pipe
-  app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalPipes(new ValidationPipe({
+    whitelist: true, // Strip away properties not in DTO
+    forbidNonWhitelisted: true, // Throw error for non-whitelisted properties
+    transform: true, // Automatically transform payloads to be objects typed according to their DTO classes
+  }));
   
   // Setup Swagger documentation
   const swaggerConfig = new DocumentBuilder()

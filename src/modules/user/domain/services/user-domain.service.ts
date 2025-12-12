@@ -20,16 +20,6 @@ export class UserDomainService {
     firstName: string,
     lastName: string,
   ): Promise<User> {
-    // Validate email format
-    if (!this.userValidation.validateEmail(email)) {
-      throw new Error('Invalid email format');
-    }
-
-    // Validate password strength
-    if (!this.userValidation.validatePassword(password)) {
-      throw new Error('Password does not meet requirements');
-    }
-
     // Check if user already exists
     const existingUser = await this.userRepository.findByEmail(email);
     if (existingUser) {

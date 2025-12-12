@@ -6,6 +6,11 @@ import {
   Param,
   HttpStatus,
   HttpCode,
+  BadRequestException,
+  ConflictException,
+  NotFoundException,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -14,7 +19,7 @@ import {
   ApiParam,
 } from '@nestjs/swagger';
 import { CreateUserUseCase, GetUserByIdUseCase } from '../../application/use-cases/user.use-cases';
-import { CreateUserDto, UserResponseDto } from '../dto';
+import { CreateUserDto, UserResponseDto, ErrorResponseDto } from '../dto';
 
 @ApiTags('users')
 @Controller('users')
@@ -26,6 +31,7 @@ export class UserController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
+  @UsePipes(new ValidationPipe({ transform: true, whitelist: true }))
   @ApiOperation({ summary: 'Create a new user' })
   @ApiResponse({
     status: HttpStatus.CREATED,
@@ -35,28 +41,40 @@ export class UserController {
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
     description: 'Invalid input data.',
+    type: ErrorResponseDto,
   })
   @ApiResponse({
     status: HttpStatus.CONFLICT,
     description: 'User with this email already exists.',
+    type: ErrorResponseDto,
   })
   async createUser(@Body() createUserDto: CreateUserDto): Promise<UserResponseDto> {
-    const user = await this.createUserUseCase.execute(
-      createUserDto.email,
-      createUserDto.password,
-      createUserDto.firstName,
-      createUserDto.lastName,
-    );
+    try {
+      const user = await this.createUserUseCase.execute(
+        createUserDto.email,
+        createUserDto.password,
+        createUserDto.firstName,
+        createUserDto.lastName,
+      );
 
-    return new UserResponseDto({
-      id: user.id,
-      email: user.email,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      isVerified: user.isVerified,
-      createdAt: user.createdAt,
-      updatedAt: user.updatedAt,
-    });
+      return new UserResponseDto({
+        id: user.id,
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        isVerified: user.isVerified,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt,
+      });
+    } catch (error) {
+      if (error.message === 'User with this email already exists') {
+        throw new ConflictException('User with this email already exists');
+      }
+      if (error.message === 'Invalid email format' || error.message === 'Password does not meet requirements') {
+        throw new BadRequestException(error.message);
+      }
+      throw error;
+    }
   }
 
   @Get(':id')
@@ -74,18 +92,26 @@ export class UserController {
   @ApiResponse({
     status: HttpStatus.NOT_FOUND,
     description: 'User not found.',
+    type: ErrorResponseDto,
   })
   async getUserById(@Param('id') id: string): Promise<UserResponseDto> {
-    const user = await this.getUserByIdUseCase.execute(id);
+    try {
+      const user = await this.getUserByIdUseCase.execute(id);
 
-    return new UserResponseDto({
-      id: user.id,
-      email: user.email,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      isVerified: user.isVerified,
-      createdAt: user.createdAt,
-      updatedAt: user.updatedAt,
-    });
+      return new UserResponseDto({
+        id: user.id,
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        isVerified: user.isVerified,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt,
+      });
+    } catch (error) {
+      if (error.message === 'User not found') {
+        throw new NotFoundException('User not found');
+      }
+      throw error;
+    }
   }
 }
