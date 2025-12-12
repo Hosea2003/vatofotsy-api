@@ -1,6 +1,8 @@
+import { Injectable } from '@nestjs/common';
 import { User } from '../../infrastructure/entities/user.entity';
 import { UserDomainService } from '../../domain/services/user-domain.service';
 
+@Injectable()
 export class CreateUserUseCase {
   constructor(private readonly userDomainService: UserDomainService) {}
 
@@ -14,6 +16,7 @@ export class CreateUserUseCase {
   }
 }
 
+@Injectable()
 export class GetUserByIdUseCase {
   constructor(private readonly userDomainService: UserDomainService) {}
 
@@ -26,6 +29,7 @@ export class GetUserByIdUseCase {
   }
 }
 
+@Injectable()
 export class UpdateUserProfileUseCase {
   constructor(private readonly userDomainService: UserDomainService) {}
 

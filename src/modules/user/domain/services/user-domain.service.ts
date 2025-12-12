@@ -1,10 +1,16 @@
-import { UserRepositoryPort, UserValidationPort, PasswordHashingPort } from '../ports/user.ports';
+import { Inject, Injectable } from '@nestjs/common';
+import type { UserRepositoryPort, UserValidationPort, PasswordHashingPort } from '../ports/user.ports';
 import { User } from '../../infrastructure/entities/user.entity';
+import { USER_REPOSITORY, USER_VALIDATION, PASSWORD_HASHING } from '../../users.module';
 
+@Injectable()
 export class UserDomainService {
   constructor(
+    @Inject(USER_REPOSITORY)
     private readonly userRepository: UserRepositoryPort,
+    @Inject(USER_VALIDATION)
     private readonly userValidation: UserValidationPort,
+    @Inject(PASSWORD_HASHING)
     private readonly passwordHashing: PasswordHashingPort,
   ) {}
 
@@ -39,7 +45,7 @@ export class UserDomainService {
       password: hashedPassword,
       firstName,
       lastName,
-      isVerified: false,
+      isVerified: true, // Set to true by default for now
     };
 
     return await this.userRepository.create(userData);
