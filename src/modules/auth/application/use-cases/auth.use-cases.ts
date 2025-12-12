@@ -1,6 +1,8 @@
+import { Injectable } from '@nestjs/common';
 import { AuthToken, AuthCredentials } from '../../domain/entities/auth.entity';
 import { AuthDomainService } from '../../domain/services/auth-domain.service';
 
+@Injectable()
 export class LoginUseCase {
   constructor(private readonly authDomainService: AuthDomainService) {}
 
@@ -10,6 +12,7 @@ export class LoginUseCase {
   }
 }
 
+@Injectable()
 export class RefreshTokenUseCase {
   constructor(private readonly authDomainService: AuthDomainService) {}
 
@@ -18,6 +21,7 @@ export class RefreshTokenUseCase {
   }
 }
 
+@Injectable()
 export class LogoutUseCase {
   constructor(private readonly authDomainService: AuthDomainService) {}
 
@@ -26,6 +30,7 @@ export class LogoutUseCase {
   }
 }
 
+@Injectable()
 export class ValidateTokenUseCase {
   constructor(private readonly authDomainService: AuthDomainService) {}
 

@@ -39,6 +39,7 @@ import { USER_REPOSITORY, USER_VALIDATION, PASSWORD_HASHING } from './user.token
     CreateUserUseCase,
     GetUserByIdUseCase,
     USER_REPOSITORY,
+    PASSWORD_HASHING,
   ],
 })
 export class UsersModule {}

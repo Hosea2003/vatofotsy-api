@@ -1,0 +1,6 @@
+// Dependency Injection Tokens for Auth Module
+export const JWT_TOKEN_PORT = 'JWT_TOKEN_PORT';
+export const AUTH_REPOSITORY_PORT = 'AUTH_REPOSITORY_PORT';
+export const PASSWORD_VALIDATION_PORT = 'PASSWORD_VALIDATION_PORT';
+export const USER_LOOKUP_PORT = 'USER_LOOKUP_PORT';
+export const AUTH_EVENT_PORT = 'AUTH_EVENT_PORT';

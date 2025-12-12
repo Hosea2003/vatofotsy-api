@@ -5,6 +5,7 @@ import configuration from './config/configuration';
 import databaseConfig from './config/database.config';
 import jwtConfig from './config/jwt.config';
 import { UsersModule } from './modules/user/users.module';
+import { AuthModule } from './modules/auth/auth.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { UsersModule } from './modules/user/users.module';
       useFactory: (configService: ConfigService) => configService.get('database')!,
     }),
     UsersModule,
+    AuthModule,
   ],
   controllers: [],
   providers: [],

@@ -1,19 +1,33 @@
+import { Inject, Injectable } from '@nestjs/common';
 import { AuthToken, AuthCredentials } from '../entities/auth.entity';
 import { User } from '../../../user/infrastructure/entities/user.entity';
-import { 
+import type { 
   JwtTokenPort, 
   AuthRepositoryPort, 
   PasswordValidationPort, 
   UserLookupPort,
   AuthEventPort 
 } from '../ports/auth.ports';
+import { 
+  JWT_TOKEN_PORT, 
+  AUTH_REPOSITORY_PORT, 
+  PASSWORD_VALIDATION_PORT, 
+  USER_LOOKUP_PORT, 
+  AUTH_EVENT_PORT 
+} from '../../auth.tokens';
 
+@Injectable()
 export class AuthDomainService {
   constructor(
+    @Inject(JWT_TOKEN_PORT)
     private readonly jwtToken: JwtTokenPort,
+    @Inject(AUTH_REPOSITORY_PORT)
     private readonly authRepository: AuthRepositoryPort,
+    @Inject(PASSWORD_VALIDATION_PORT)
     private readonly passwordValidation: PasswordValidationPort,
+    @Inject(USER_LOOKUP_PORT)
     private readonly userLookup: UserLookupPort,
+    @Inject(AUTH_EVENT_PORT)
     private readonly authEvent: AuthEventPort,
   ) {}
 
