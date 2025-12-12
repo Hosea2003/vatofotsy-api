@@ -7,11 +7,7 @@ import { UserValidationAdapter } from './infrastructure/adapters/user-validation
 import { PasswordHashingAdapter } from './infrastructure/adapters/password-hashing.adapter';
 import { UserDomainService } from './domain/services/user-domain.service';
 import { CreateUserUseCase, GetUserByIdUseCase } from './application/use-cases/user.use-cases';
-
-// DI Tokens
-export const USER_REPOSITORY = 'USER_REPOSITORY';
-export const USER_VALIDATION = 'USER_VALIDATION';
-export const PASSWORD_HASHING = 'PASSWORD_HASHING';
+import { USER_REPOSITORY, USER_VALIDATION, PASSWORD_HASHING } from './user.tokens';
 
 @Module({
   imports: [TypeOrmModule.forFeature([User])],

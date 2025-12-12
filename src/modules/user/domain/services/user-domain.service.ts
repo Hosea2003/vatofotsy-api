@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import type { UserRepositoryPort, UserValidationPort, PasswordHashingPort } from '../ports/user.ports';
 import { User } from '../../infrastructure/entities/user.entity';
-import { USER_REPOSITORY, USER_VALIDATION, PASSWORD_HASHING } from '../../users.module';
+import { USER_REPOSITORY, USER_VALIDATION, PASSWORD_HASHING } from '../../user.tokens';
 
 @Injectable()
 export class UserDomainService {
