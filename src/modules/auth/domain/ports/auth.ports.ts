@@ -1,5 +1,5 @@
 import { AuthToken, AuthCredentials } from '../entities/auth.entity';
-import { User } from '../../../user/domain/entities/user.entity';
+import { User } from '../../../user/infrastructure/entities/user.entity';
 
 export interface JwtTokenPort {
   sign(payload: any, options?: { expiresIn?: string }): Promise<string>;

@@ -1,5 +1,5 @@
 import { AuthToken, AuthCredentials } from '../entities/auth.entity';
-import { User } from '../../../user/domain/entities/user.entity';
+import { User } from '../../../user/infrastructure/entities/user.entity';
 import { 
   JwtTokenPort, 
   AuthRepositoryPort, 
@@ -31,8 +31,8 @@ export class AuthDomainService {
       throw new Error('Invalid credentials');
     }
 
-    if (!user.isActive) {
-      throw new Error('User account is deactivated');
+    if (!user.isVerified) {
+      throw new Error('User account is not verified');
     }
 
     const tokens = await this.generateTokens(user.id);
@@ -56,8 +56,8 @@ export class AuthDomainService {
     }
 
     const user = await this.userLookup.findUserById(userId);
-    if (!user || !user.isActive) {
-      throw new Error('User not found or inactive');
+    if (!user || !user.isVerified) {
+      throw new Error('User not found or not verified');
     }
 
     const tokens = await this.generateTokens(user.id);

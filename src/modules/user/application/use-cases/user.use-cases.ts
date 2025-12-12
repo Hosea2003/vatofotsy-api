@@ -1,4 +1,4 @@
-import { User } from '../../domain/entities/user.entity';
+import { User } from '../../infrastructure/entities/user.entity';
 import { UserDomainService } from '../../domain/services/user-domain.service';
 
 export class CreateUserUseCase {

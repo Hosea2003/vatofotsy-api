@@ -1,5 +1,5 @@
-import { User } from '../entities/user.entity';
 import { UserRepositoryPort, UserValidationPort, PasswordHashingPort } from '../ports/user.ports';
+import { User } from '../../infrastructure/entities/user.entity';
 
 export class UserDomainService {
   constructor(
@@ -34,10 +34,15 @@ export class UserDomainService {
     const hashedPassword = await this.passwordHashing.hash(password);
 
     // Create user
-    const userId = this.generateUserId();
-    const user = User.create(userId, email, hashedPassword, firstName, lastName);
+    const userData = {
+      email,
+      password: hashedPassword,
+      firstName,
+      lastName,
+      isVerified: false,
+    };
 
-    return await this.userRepository.create(user);
+    return await this.userRepository.create(userData);
   }
 
   async updateUserProfile(
@@ -50,8 +55,11 @@ export class UserDomainService {
       throw new Error('User not found');
     }
 
-    const updatedUser = user.updateProfile(firstName, lastName);
-    return await this.userRepository.update(updatedUser);
+    const updateData: Partial<User> = {};
+    if (firstName !== undefined) updateData.firstName = firstName;
+    if (lastName !== undefined) updateData.lastName = lastName;
+
+    return await this.userRepository.update(userId, updateData);
   }
 
   async validateUserCredentials(email: string, password: string): Promise<User | null> {
@@ -72,7 +80,23 @@ export class UserDomainService {
     return await this.userRepository.findById(userId);
   }
 
-  private generateUserId(): string {
-    return `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  async verifyUser(userId: string): Promise<User> {
+    const user = await this.userRepository.findById(userId);
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    user.verify();
+    return await this.userRepository.update(userId, { isVerified: true });
+  }
+
+  async unverifyUser(userId: string): Promise<User> {
+    const user = await this.userRepository.findById(userId);
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    user.unverify();
+    return await this.userRepository.update(userId, { isVerified: false });
   }
 }
