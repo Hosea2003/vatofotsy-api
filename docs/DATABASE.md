@@ -14,10 +14,10 @@ This project uses TypeORM with automatic entity discovery and migrations.
 
 ```bash
 # Generate a new migration (based on entity changes)
-pnpm run migration:generate -- -n CreateSomethingTable
+pnpm run migration:generate src/migrations/CreateSomethingTable
 
 # Create an empty migration file
-pnpm run migration:create -- CreateSomethingTable
+pnpm run migration:create src/migrations/CreateSomethingTable
 
 # Run pending migrations
 pnpm run migration:run
