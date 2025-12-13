@@ -22,12 +22,9 @@ import { CreateUserUseCase, GetUserByIdUseCase } from '../../application/use-cas
 import { CreateUserDto, UserResponseDto, ErrorResponseDto } from '../dto';
 import { Public, CurrentUser } from '../../../auth';
 import type { AuthenticatedUser } from '../../../auth';
-import { UseGuards } from '@nestjs/common';
-import { JwtAuthGuard } from '../../../auth/guards/jwt-auth.guard';
 
 @ApiTags('users')
 @Controller('users')
-@UseGuards(JwtAuthGuard)
 export class UserController {
   constructor(
     private readonly createUserUseCase: CreateUserUseCase,
@@ -83,6 +80,39 @@ export class UserController {
     }
   }
 
+  @Get('profile')
+  @ApiOperation({ summary: 'Get current user profile' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Current user profile.',
+    type: UserResponseDto,
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'User not authenticated.',
+    type: ErrorResponseDto,
+  })
+  async getCurrentUserProfile(@CurrentUser() user: AuthenticatedUser): Promise<UserResponseDto> {
+    try {
+      const userProfile = await this.getUserByIdUseCase.execute(user.userId);
+
+      return new UserResponseDto({
+        id: userProfile.id,
+        email: userProfile.email,
+        firstName: userProfile.firstName,
+        lastName: userProfile.lastName,
+        isVerified: userProfile.isVerified,
+        createdAt: userProfile.createdAt,
+        updatedAt: userProfile.updatedAt,
+      });
+    } catch (error) {
+      if (error.message === 'User not found') {
+        throw new NotFoundException('User profile not found');
+      }
+      throw error;
+    }
+  }
+
   @Get(':id')
   @ApiOperation({ summary: 'Get user by ID' })
   @ApiParam({
@@ -116,39 +146,6 @@ export class UserController {
     } catch (error) {
       if (error.message === 'User not found') {
         throw new NotFoundException('User not found');
-      }
-      throw error;
-    }
-  }
-
-  @Get('profile')
-  @ApiOperation({ summary: 'Get current user profile' })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: 'Current user profile.',
-    type: UserResponseDto,
-  })
-  @ApiResponse({
-    status: HttpStatus.UNAUTHORIZED,
-    description: 'User not authenticated.',
-    type: ErrorResponseDto,
-  })
-  async getCurrentUserProfile(@CurrentUser() user: AuthenticatedUser): Promise<UserResponseDto> {
-    try {
-      const userProfile = await this.getUserByIdUseCase.execute(user.userId);
-
-      return new UserResponseDto({
-        id: userProfile.id,
-        email: userProfile.email,
-        firstName: userProfile.firstName,
-        lastName: userProfile.lastName,
-        isVerified: userProfile.isVerified,
-        createdAt: userProfile.createdAt,
-        updatedAt: userProfile.updatedAt,
-      });
-    } catch (error) {
-      if (error.message === 'User not found') {
-        throw new NotFoundException('User profile not found');
       }
       throw error;
     }
