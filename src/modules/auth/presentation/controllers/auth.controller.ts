@@ -20,6 +20,7 @@ import { LoginDto, AuthTokenResponseDto, RefreshTokenDto, LogoutDto, ValidateTok
 import { ErrorResponseDto } from '../../../user/presentation/dto/error-response.dto';
 import { JWT_TOKEN_PORT } from '../../auth.tokens';
 import type { JwtTokenPort } from '../../domain/ports/auth.ports';
+import { Public } from '../../decorators/public.decorator';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -33,6 +34,7 @@ export class AuthController {
     private readonly jwtTokenPort: JwtTokenPort,
   ) {}
 
+  @Public()
   @Post('login')
   @HttpCode(HttpStatus.OK)
   @UsePipes(new ValidationPipe({ transform: true, whitelist: true }))
@@ -74,6 +76,7 @@ export class AuthController {
     }
   }
 
+  @Public()
   @Post('refresh')
   @HttpCode(HttpStatus.OK)
   @UsePipes(new ValidationPipe({ transform: true, whitelist: true }))

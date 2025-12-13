@@ -9,6 +9,7 @@ import { InMemoryAuthRepository } from './infrastructure/adapters/in-memory-auth
 import { UserLookupAdapter } from './infrastructure/adapters/user-lookup.adapter';
 import { PasswordValidationAdapter } from './infrastructure/adapters/password-validation.adapter';
 import { AuthEventAdapter } from './infrastructure/adapters/auth-event.adapter';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { UsersModule } from '../user/users.module';
 import {
   JWT_TOKEN_PORT,
@@ -44,6 +45,9 @@ import {
     LogoutUseCase,
     ValidateTokenUseCase,
     
+    // Guards
+    JwtAuthGuard,
+    
     // Infrastructure Adapters
     {
       provide: JWT_TOKEN_PORT,
@@ -72,6 +76,7 @@ import {
     RefreshTokenUseCase,
     LogoutUseCase,
     ValidateTokenUseCase,
+    JwtAuthGuard,
     JWT_TOKEN_PORT,
   ],
 })
