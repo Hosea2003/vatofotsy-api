@@ -37,7 +37,15 @@ export class UpdateUserProfileUseCase {
     userId: string,
     firstName?: string,
     lastName?: string,
+    oldPassword?: string,
+    newPassword?: string,
   ): Promise<User> {
-    return await this.userDomainService.updateUserProfile(userId, firstName, lastName);
+    return await this.userDomainService.updateUserProfile(
+      userId, 
+      firstName, 
+      lastName, 
+      oldPassword, 
+      newPassword
+    );
   }
 }

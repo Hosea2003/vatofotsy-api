@@ -6,7 +6,7 @@ import { UserRepository } from './infrastructure/adapters/user.repository';
 import { UserValidationAdapter } from './infrastructure/adapters/user-validation.adapter';
 import { PasswordHashingAdapter } from './infrastructure/adapters/password-hashing.adapter';
 import { UserDomainService } from './domain/services/user-domain.service';
-import { CreateUserUseCase, GetUserByIdUseCase } from './application/use-cases/user.use-cases';
+import { CreateUserUseCase, GetUserByIdUseCase, UpdateUserProfileUseCase } from './application/use-cases/user.use-cases';
 import { USER_REPOSITORY, USER_VALIDATION, PASSWORD_HASHING } from './user.tokens';
 
 @Module({
@@ -19,6 +19,7 @@ import { USER_REPOSITORY, USER_VALIDATION, PASSWORD_HASHING } from './user.token
     // Use Cases
     CreateUserUseCase,
     GetUserByIdUseCase,
+    UpdateUserProfileUseCase,
     
     // Infrastructure Adapters
     {
@@ -38,6 +39,7 @@ import { USER_REPOSITORY, USER_VALIDATION, PASSWORD_HASHING } from './user.token
     UserDomainService,
     CreateUserUseCase,
     GetUserByIdUseCase,
+    UpdateUserProfileUseCase,
     USER_REPOSITORY,
     PASSWORD_HASHING,
   ],

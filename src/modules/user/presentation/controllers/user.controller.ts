@@ -4,6 +4,7 @@ import {
   Body,
   Get,
   Param,
+  Put,
   HttpStatus,
   HttpCode,
   BadRequestException,
@@ -11,6 +12,7 @@ import {
   NotFoundException,
   UsePipes,
   ValidationPipe,
+  UnauthorizedException,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -18,8 +20,8 @@ import {
   ApiResponse,
   ApiParam,
 } from '@nestjs/swagger';
-import { CreateUserUseCase, GetUserByIdUseCase } from '../../application/use-cases/user.use-cases';
-import { CreateUserDto, UserResponseDto, ErrorResponseDto } from '../dto';
+import { CreateUserUseCase, GetUserByIdUseCase, UpdateUserProfileUseCase } from '../../application/use-cases/user.use-cases';
+import { CreateUserDto, UpdateUserDto, ChangePasswordDto, UserResponseDto, ErrorResponseDto } from '../dto';
 import { Public, CurrentUser } from '../../../auth';
 import type { AuthenticatedUser } from '../../../auth';
 
@@ -29,6 +31,7 @@ export class UserController {
   constructor(
     private readonly createUserUseCase: CreateUserUseCase,
     private readonly getUserByIdUseCase: GetUserByIdUseCase,
+    private readonly updateUserProfileUseCase: UpdateUserProfileUseCase,
   ) {}
 
   @Public()
@@ -148,6 +151,159 @@ export class UserController {
         throw new NotFoundException('User not found');
       }
       throw error;
+    }
+  }
+
+  @Put('profile')
+  @HttpCode(HttpStatus.OK)
+  @UsePipes(new ValidationPipe({ transform: true, whitelist: true }))
+  @ApiOperation({ summary: 'Update current user profile' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'User profile updated successfully.',
+    type: UserResponseDto,
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Invalid input data.',
+    type: ErrorResponseDto,
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'User not authenticated.',
+    type: ErrorResponseDto,
+  })
+  async updateCurrentUserProfile(
+    @CurrentUser() user: AuthenticatedUser,
+    @Body() updateUserDto: UpdateUserDto,
+  ): Promise<UserResponseDto> {
+    try {
+      const updatedUser = await this.updateUserProfileUseCase.execute(
+        user.userId,
+        updateUserDto.firstName,
+        updateUserDto.lastName,
+      );
+
+      return new UserResponseDto({
+        id: updatedUser.id,
+        email: updatedUser.email,
+        firstName: updatedUser.firstName,
+        lastName: updatedUser.lastName,
+        isVerified: updatedUser.isVerified,
+        createdAt: updatedUser.createdAt,
+        updatedAt: updatedUser.updatedAt,
+      });
+    } catch (error) {
+      if (error.message === 'User not found') {
+        throw new NotFoundException('User profile not found');
+      }
+      throw new BadRequestException(error.message);
+    }
+  }
+
+  @Put('profile/password')
+  @HttpCode(HttpStatus.OK)
+  @UsePipes(new ValidationPipe({ transform: true, whitelist: true }))
+  @ApiOperation({ summary: 'Change current user password' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Password changed successfully.',
+    schema: {
+      type: 'object',
+      properties: {
+        message: { type: 'string', example: 'Password changed successfully' }
+      }
+    }
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Invalid input data.',
+    type: ErrorResponseDto,
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'User not authenticated or incorrect current password.',
+    type: ErrorResponseDto,
+  })
+  async changePassword(
+    @CurrentUser() user: AuthenticatedUser,
+    @Body() changePasswordDto: ChangePasswordDto,
+  ): Promise<{ message: string }> {
+    try {
+      await this.updateUserProfileUseCase.execute(
+        user.userId,
+        undefined, // firstName
+        undefined, // lastName
+        changePasswordDto.oldPassword,
+        changePasswordDto.newPassword,
+      );
+
+      return { message: 'Password changed successfully' };
+    } catch (error) {
+      if (error.message === 'User not found') {
+        throw new NotFoundException('User profile not found');
+      }
+      if (error.message === 'Current password is incorrect') {
+        throw new UnauthorizedException('Current password is incorrect');
+      }
+      throw new BadRequestException(error.message);
+    }
+  }
+
+  @Put(':id')
+  @HttpCode(HttpStatus.OK)
+  @UsePipes(new ValidationPipe({ transform: true, whitelist: true }))
+  @ApiOperation({ summary: 'Update user by ID (admin only)' })
+  @ApiParam({
+    name: 'id',
+    description: 'User ID',
+    example: '123e4567-e89b-12d3-a456-426614174000',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'User updated successfully.',
+    type: UserResponseDto,
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Invalid input data.',
+    type: ErrorResponseDto,
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: 'User not found.',
+    type: ErrorResponseDto,
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'User not authenticated.',
+    type: ErrorResponseDto,
+  })
+  async updateUserById(
+    @Param('id') id: string,
+    @Body() updateUserDto: UpdateUserDto,
+  ): Promise<UserResponseDto> {
+    try {
+      const updatedUser = await this.updateUserProfileUseCase.execute(
+        id,
+        updateUserDto.firstName,
+        updateUserDto.lastName,
+      );
+
+      return new UserResponseDto({
+        id: updatedUser.id,
+        email: updatedUser.email,
+        firstName: updatedUser.firstName,
+        lastName: updatedUser.lastName,
+        isVerified: updatedUser.isVerified,
+        createdAt: updatedUser.createdAt,
+        updatedAt: updatedUser.updatedAt,
+      });
+    } catch (error) {
+      if (error.message === 'User not found') {
+        throw new NotFoundException('User not found');
+      }
+      throw new BadRequestException(error.message);
     }
   }
 }

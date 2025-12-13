@@ -45,6 +45,8 @@ export class UserDomainService {
     userId: string,
     firstName?: string,
     lastName?: string,
+    oldPassword?: string,
+    newPassword?: string,
   ): Promise<User> {
     const user = await this.userRepository.findById(userId);
     if (!user) {
@@ -52,8 +54,25 @@ export class UserDomainService {
     }
 
     const updateData: Partial<User> = {};
+    
+    // Update profile fields
     if (firstName !== undefined) updateData.firstName = firstName;
     if (lastName !== undefined) updateData.lastName = lastName;
+
+    // Handle password change
+    if (oldPassword && newPassword) {
+      // Verify old password
+      const isOldPasswordValid = await this.passwordHashing.compare(oldPassword, user.password);
+      if (!isOldPasswordValid) {
+        throw new Error('Current password is incorrect');
+      }
+
+      // Hash new password
+      const hashedNewPassword = await this.passwordHashing.hash(newPassword);
+      updateData.password = hashedNewPassword;
+    } else if (oldPassword || newPassword) {
+      throw new Error('Both old password and new password are required when changing password');
+    }
 
     return await this.userRepository.update(userId, updateData);
   }
