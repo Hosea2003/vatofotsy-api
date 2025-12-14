@@ -16,10 +16,10 @@ import {
   UpdatePollUseCase,
   DeletePollUseCase,
 } from './application/use-cases/poll.use-cases';
-import { TypeOrmPollRepository } from './infrastructure/adapters/typeorm-poll.repository';
-import { TypeOrmPollChoiceRepository } from './infrastructure/adapters/typeorm-poll-choice.repository';
-import { TypeOrmPollVoteRepository } from './infrastructure/adapters/typeorm-poll-vote.repository';
-import { TypeOrmPollChoiceMediaRepository } from './infrastructure/repositories/typeorm-poll-choice-media.repository';
+import { TypeOrmPollRepository } from './infrastructure/adapters/poll.repository';
+import { TypeOrmPollChoiceRepository } from './infrastructure/adapters/poll-choice.repository';
+import { TypeOrmPollVoteRepository } from './infrastructure/adapters/poll-vote.repository';
+import { TypeOrmPollChoiceMediaRepository } from './infrastructure/repositories/poll-choice-media.repository';
 import { LocalFileUploadService } from './infrastructure/adapters/local-file-upload.service';
 import { PollChoiceMediaService } from './application/services/poll-choice-media.service';
 import { POLL_REPOSITORY, POLL_CHOICE_REPOSITORY, POLL_VOTE_REPOSITORY, POLL_CHOICE_MEDIA_REPOSITORY, FILE_UPLOAD_SERVICE } from './poll.tokens';
