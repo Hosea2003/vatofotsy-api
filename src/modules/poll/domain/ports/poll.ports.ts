@@ -31,8 +31,34 @@ export interface PollVoteRepositoryPort {
   delete(id: string): Promise<void>;
 }
 
+export interface UploadedFile {
+  fieldname: string;
+  originalname: string;
+  encoding: string;
+  mimetype: string;
+  buffer: Buffer;
+  size: number;
+}
+
+export interface FileUploadResult {
+  fileName: string;
+  originalName: string;
+  mimeType: string;
+  size: number;
+  url: string;
+}
+
 export interface FileUploadServicePort {
+  // Original methods for backward compatibility
   uploadFile(file: Buffer, fileName: string, contentType: string): Promise<string>;
   deleteFile(fileUrl: string): Promise<void>;
   generateUploadUrl(fileName: string, contentType: string): Promise<{ uploadUrl: string; fileUrl: string }>;
+  
+  // New methods for multiple file uploads
+  uploadSingleFile?(file: UploadedFile): Promise<FileUploadResult>;
+  uploadMultipleFiles?(files: UploadedFile[]): Promise<FileUploadResult[]>;
+  deleteMultipleFiles?(fileNames: string[]): Promise<void>;
+  validateFile?(file: UploadedFile): { isValid: boolean; error?: string };
+  validateMultipleFiles?(files: UploadedFile[]): { isValid: boolean; errors: string[] };
+  getMediaTypeFromMimeType?(mimeType: string): string;
 }

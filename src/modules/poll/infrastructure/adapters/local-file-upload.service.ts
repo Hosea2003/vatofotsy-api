@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import * as fs from 'fs/promises';
 import * as path from 'path';
 import { v4 as uuidv4 } from 'uuid';
-import type { FileUploadServicePort } from '../../domain/ports/poll.ports';
+import type { FileUploadServicePort, UploadedFile, FileUploadResult } from '../../domain/ports/poll.ports';
 
 @Injectable()
 export class LocalFileUploadService implements FileUploadServicePort {
@@ -21,22 +21,30 @@ export class LocalFileUploadService implements FileUploadServicePort {
     }
   }
 
-  async uploadFile(file: Buffer, fileName: string, contentType: string): Promise<string> {
-    const fileExtension = path.extname(fileName);
-    const uniqueFileName = `${uuidv4()}${fileExtension}`;
-    const filePath = path.join(this.uploadDir, uniqueFileName);
+  async uploadSingleFile(file: UploadedFile): Promise<FileUploadResult> {
+    const fileExtension = path.extname(file.originalname);
+    const fileName = `${uuidv4()}${fileExtension}`;
+    const filePath = path.join(this.uploadDir, fileName);
 
-    await fs.writeFile(filePath, file);
-    
-    return `${this.baseUrl}/uploads/poll-media/${uniqueFileName}`;
+    await fs.writeFile(filePath, file.buffer);
+
+    return {
+      fileName,
+      originalName: file.originalname,
+      mimeType: file.mimetype,
+      size: file.size,
+      url: `${this.baseUrl}/uploads/poll-media/${fileName}`,
+    };
   }
 
-  async deleteFile(fileUrl: string): Promise<void> {
+  async uploadMultipleFiles(files: UploadedFile[]): Promise<FileUploadResult[]> {
+    const uploadPromises = files.map(file => this.uploadSingleFile(file));
+    return Promise.all(uploadPromises);
+  }
+
+  async deleteFile(fileName: string): Promise<void> {
     try {
-      // Extract filename from URL
-      const fileName = path.basename(new URL(fileUrl).pathname);
       const filePath = path.join(this.uploadDir, fileName);
-      
       await fs.unlink(filePath);
     } catch (error) {
       console.error('Failed to delete file:', error);
@@ -44,15 +52,78 @@ export class LocalFileUploadService implements FileUploadServicePort {
     }
   }
 
+  async deleteMultipleFiles(fileNames: string[]): Promise<void> {
+    const deletePromises = fileNames.map(fileName => this.deleteFile(fileName));
+    await Promise.allSettled(deletePromises);
+  }
+
+  validateFile(file: UploadedFile): { isValid: boolean; error?: string } {
+    // Max file size: 10MB
+    const maxSize = 10 * 1024 * 1024;
+    if (file.size > maxSize) {
+      return { isValid: false, error: 'File size exceeds 10MB limit' };
+    }
+
+    // Allowed file types
+    const allowedTypes = [
+      'image/jpeg',
+      'image/jpg', 
+      'image/png',
+      'image/gif',
+      'image/webp',
+      'video/mp4',
+      'video/webm',
+      'application/pdf',
+    ];
+
+    if (!allowedTypes.includes(file.mimetype)) {
+      return { isValid: false, error: 'File type not allowed' };
+    }
+
+    return { isValid: true };
+  }
+
+  validateMultipleFiles(files: UploadedFile[]): { isValid: boolean; errors: string[] } {
+    const errors: string[] = [];
+    
+    files.forEach((file, index) => {
+      const validation = this.validateFile(file);
+      if (!validation.isValid) {
+        errors.push(`File ${index + 1}: ${validation.error}`);
+      }
+    });
+
+    return { isValid: errors.length === 0, errors };
+  }
+
+  getMediaTypeFromMimeType(mimeType: string): string {
+    if (mimeType.startsWith('image/')) return 'IMAGE';
+    if (mimeType.startsWith('video/')) return 'VIDEO';
+    if (mimeType === 'application/pdf') return 'DOCUMENT';
+    return 'DOCUMENT';
+  }
+
+  // Original interface method for backward compatibility
+  async uploadFile(file: Buffer, fileName: string, contentType: string): Promise<string> {
+    const uploadedFile: UploadedFile = {
+      fieldname: 'file',
+      originalname: fileName,
+      encoding: '7bit',
+      mimetype: contentType,
+      buffer: file,
+      size: file.length,
+    };
+    const result = await this.uploadSingleFile(uploadedFile);
+    return result.url;
+  }
+
   async generateUploadUrl(fileName: string, contentType: string): Promise<{ uploadUrl: string; fileUrl: string }> {
-    // For local storage, we'll return a placeholder URL
-    // In a real S3-compatible service, this would generate a presigned URL
     const fileExtension = path.extname(fileName);
     const uniqueFileName = `${uuidv4()}${fileExtension}`;
     const fileUrl = `${this.baseUrl}/uploads/poll-media/${uniqueFileName}`;
     
     return {
-      uploadUrl: `${this.baseUrl}/api/polls/upload`, // We'll create this endpoint
+      uploadUrl: `${this.baseUrl}/api/polls/upload`,
       fileUrl,
     };
   }

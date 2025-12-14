@@ -4,6 +4,9 @@ import { ApiProperty } from '@nestjs/swagger';
 import { PollType, ResultDisplayType, PollStatus } from '../../infrastructure/entities/poll.entity';
 import { MediaType } from '../../infrastructure/entities/poll-choice.entity';
 
+// Export file upload DTOs
+export * from './file-upload.dto';
+
 export class CreatePollChoiceDto {
   @ApiProperty({
     example: 'Option A',
@@ -113,6 +116,24 @@ export class CreatePollDto {
   @IsOptional()
   @IsBoolean()
   allowMultipleChoices?: boolean;
+
+  @ApiProperty({
+    example: 'http://localhost:3000/uploads/poll-media/main-image.jpg',
+    description: 'Main image URL for the poll',
+    required: false,
+  })
+  @IsOptional()
+  @IsString()
+  mainImageUrl?: string;
+
+  @ApiProperty({
+    example: 'main-image.jpg',
+    description: 'Main image filename',
+    required: false,
+  })
+  @IsOptional()
+  @IsString()
+  mainImageFileName?: string;
 
   @ApiProperty({
     type: [CreatePollChoiceDto],
@@ -249,6 +270,20 @@ export class PollResponseDto {
     description: 'Allow multiple choices',
   })
   allowMultipleChoices: boolean;
+
+  @ApiProperty({
+    example: 'http://localhost:3000/uploads/poll-media/main-image.jpg',
+    description: 'Main image URL for the poll',
+    required: false,
+  })
+  mainImageUrl?: string;
+
+  @ApiProperty({
+    example: 'main-image.jpg',
+    description: 'Main image filename',
+    required: false,
+  })
+  mainImageFileName?: string;
 
   @ApiProperty({
     example: true,

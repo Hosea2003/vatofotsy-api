@@ -65,6 +65,12 @@ export class Poll {
   @Column({ default: false })
   allowMultipleChoices: boolean;
 
+  @Column({ nullable: true })
+  mainImageUrl: string;
+
+  @Column({ nullable: true })
+  mainImageFileName: string;
+
   @Column({ default: true })
   isActive: boolean;
 

@@ -1,6 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
 import { Poll } from './poll.entity';
 import { PollVote } from './poll-vote.entity';
+import { PollChoiceMedia } from './poll-choice-media.entity';
 
 export enum MediaType {
   IMAGE = 'IMAGE',
@@ -51,6 +52,9 @@ export class PollChoice {
 
   @OneToMany(() => PollVote, vote => vote.choice)
   votes: PollVote[];
+
+  @OneToMany(() => PollChoiceMedia, media => media.pollChoice, { cascade: true })
+  media: PollChoiceMedia[];
 
   // Virtual field for vote count
   voteCount?: number;
