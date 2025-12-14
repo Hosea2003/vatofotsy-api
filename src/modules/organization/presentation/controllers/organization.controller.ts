@@ -27,6 +27,8 @@ import {
   UpdateOrganizationUseCase,
   DeleteOrganizationUseCase,
 } from '../../application/use-cases/organization.use-cases';
+import { Public, CurrentUser } from '../../../auth';
+import type { AuthenticatedUser } from '../../../auth';
 import {
   CreateOrganizationDto,
   UpdateOrganizationDto,
@@ -65,10 +67,14 @@ export class OrganizationController {
     description: 'Organization with this name already exists.',
     type: ErrorResponseDto,
   })
-  async createOrganization(@Body() createOrganizationDto: CreateOrganizationDto): Promise<OrganizationResponseDto> {
+  async createOrganization(
+    @CurrentUser() user: AuthenticatedUser,
+    @Body() createOrganizationDto: CreateOrganizationDto,
+  ): Promise<OrganizationResponseDto> {
     try {
       const organization = await this.createOrganizationUseCase.execute(
         createOrganizationDto.name,
+        user.userId,
         createOrganizationDto.description,
         createOrganizationDto.website,
         createOrganizationDto.email,

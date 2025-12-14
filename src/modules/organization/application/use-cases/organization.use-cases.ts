@@ -1,5 +1,6 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { OrganizationDomainService } from '../../domain/services/organization-domain.service';
+import { MemberRole } from '../../infrastructure/entities/organization-member.entity';
 
 @Injectable()
 export class CreateOrganizationUseCase {
@@ -7,6 +8,7 @@ export class CreateOrganizationUseCase {
 
   async execute(
     name: string,
+    ownerId: string,
     description?: string,
     website?: string,
     email?: string,
@@ -15,6 +17,7 @@ export class CreateOrganizationUseCase {
   ) {
     return await this.organizationDomainService.createOrganization(
       name,
+      ownerId,
       description,
       website,
       email,
@@ -79,5 +82,78 @@ export class DeleteOrganizationUseCase {
 
   async execute(id: string): Promise<void> {
     await this.organizationDomainService.deleteOrganization(id);
+  }
+}
+
+// Member Use Cases
+@Injectable()
+export class InviteUserToOrganizationUseCase {
+  constructor(private readonly organizationDomainService: OrganizationDomainService) {}
+
+  async execute(organizationId: string, userId: string, role: MemberRole, invitedBy: string) {
+    return await this.organizationDomainService.inviteUser(organizationId, userId, role, invitedBy);
+  }
+}
+
+@Injectable()
+export class AcceptOrganizationInviteUseCase {
+  constructor(private readonly organizationDomainService: OrganizationDomainService) {}
+
+  async execute(inviteId: string, userId: string) {
+    return await this.organizationDomainService.acceptInvite(inviteId, userId);
+  }
+}
+
+@Injectable()
+export class DeclineOrganizationInviteUseCase {
+  constructor(private readonly organizationDomainService: OrganizationDomainService) {}
+
+  async execute(inviteId: string, userId: string) {
+    return await this.organizationDomainService.declineInvite(inviteId, userId);
+  }
+}
+
+@Injectable()
+export class GetOrganizationMembersUseCase {
+  constructor(private readonly organizationDomainService: OrganizationDomainService) {}
+
+  async execute(organizationId: string) {
+    return await this.organizationDomainService.getOrganizationMembers(organizationId);
+  }
+}
+
+@Injectable()
+export class GetUserOrganizationsUseCase {
+  constructor(private readonly organizationDomainService: OrganizationDomainService) {}
+
+  async execute(userId: string) {
+    return await this.organizationDomainService.getUserOrganizations(userId);
+  }
+}
+
+@Injectable()
+export class GetPendingInvitesUseCase {
+  constructor(private readonly organizationDomainService: OrganizationDomainService) {}
+
+  async execute(userId: string) {
+    return await this.organizationDomainService.getPendingInvites(userId);
+  }
+}
+
+@Injectable()
+export class RemoveOrganizationMemberUseCase {
+  constructor(private readonly organizationDomainService: OrganizationDomainService) {}
+
+  async execute(organizationId: string, userId: string, removedBy: string) {
+    await this.organizationDomainService.removeMember(organizationId, userId, removedBy);
+  }
+}
+
+@Injectable()
+export class UpdateMemberRoleUseCase {
+  constructor(private readonly organizationDomainService: OrganizationDomainService) {}
+
+  async execute(organizationId: string, userId: string, newRole: MemberRole, updatedBy: string) {
+    return await this.organizationDomainService.updateMemberRole(organizationId, userId, newRole, updatedBy);
   }
 }

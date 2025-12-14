@@ -208,6 +208,9 @@ export class OrganizationResponseDto {
   }
 }
 
+// Re-export member DTOs
+export * from './member.dto';
+
 export class ErrorResponseDto {
   @ApiProperty({
     example: 400,
