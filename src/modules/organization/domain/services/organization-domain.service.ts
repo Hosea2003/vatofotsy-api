@@ -18,6 +18,7 @@ export class OrganizationDomainService {
     website?: string,
     email?: string,
     phone?: string,
+    organizationType?: 'Group' | 'Team' | 'Organization' | 'Enterprise',
   ): Promise<Organization> {
     // Check if organization with same name already exists
     const existingOrganization = await this.organizationRepository.findByName(name);
@@ -46,6 +47,7 @@ export class OrganizationDomainService {
       website,
       email,
       phone,
+      organizationType: organizationType || 'Group',
       isActive: true,
     };
 
@@ -59,6 +61,7 @@ export class OrganizationDomainService {
     website?: string,
     email?: string,
     phone?: string,
+    organizationType?: 'Group' | 'Team' | 'Organization' | 'Enterprise',
     isActive?: boolean,
   ): Promise<Organization> {
     const organization = await this.organizationRepository.findById(id);
@@ -97,6 +100,7 @@ export class OrganizationDomainService {
       }
       updateData.phone = phone;
     }
+    if (organizationType !== undefined) updateData.organizationType = organizationType;
     if (isActive !== undefined) updateData.isActive = isActive;
 
     return await this.organizationRepository.update(id, updateData);
@@ -120,10 +124,10 @@ export class OrganizationDomainService {
   }
 
   async activateOrganization(id: string): Promise<Organization> {
-    return await this.updateOrganization(id, undefined, undefined, undefined, undefined, undefined, true);
+    return await this.updateOrganization(id, undefined, undefined, undefined, undefined, undefined, undefined, true);
   }
 
   async deactivateOrganization(id: string): Promise<Organization> {
-    return await this.updateOrganization(id, undefined, undefined, undefined, undefined, undefined, false);
+    return await this.updateOrganization(id, undefined, undefined, undefined, undefined, undefined, undefined, false);
   }
 }

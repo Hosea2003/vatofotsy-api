@@ -32,6 +32,7 @@ import {
   UpdateOrganizationDto,
   OrganizationResponseDto,
   ErrorResponseDto,
+  OrganizationType,
 } from '../dto';
 
 @ApiTags('organizations')
@@ -72,6 +73,7 @@ export class OrganizationController {
         createOrganizationDto.website,
         createOrganizationDto.email,
         createOrganizationDto.phone,
+        createOrganizationDto.organizationType,
       );
 
       return new OrganizationResponseDto({
@@ -81,6 +83,7 @@ export class OrganizationController {
         website: organization.website,
         email: organization.email,
         phone: organization.phone,
+        organizationType: organization.organizationType as OrganizationType,
         isActive: organization.isActive,
         createdAt: organization.createdAt,
         updatedAt: organization.updatedAt,
@@ -117,6 +120,7 @@ export class OrganizationController {
       website: organization.website,
       email: organization.email,
       phone: organization.phone,
+      organizationType: organization.organizationType as OrganizationType,
       isActive: organization.isActive,
       createdAt: organization.createdAt,
       updatedAt: organization.updatedAt,
@@ -151,6 +155,7 @@ export class OrganizationController {
         website: organization.website,
         email: organization.email,
         phone: organization.phone,
+        organizationType: organization.organizationType as OrganizationType,
         isActive: organization.isActive,
         createdAt: organization.createdAt,
         updatedAt: organization.updatedAt,
@@ -204,6 +209,7 @@ export class OrganizationController {
         updateOrganizationDto.website,
         updateOrganizationDto.email,
         updateOrganizationDto.phone,
+        updateOrganizationDto.organizationType,
         updateOrganizationDto.isActive,
       );
 
@@ -214,6 +220,7 @@ export class OrganizationController {
         website: organization.website,
         email: organization.email,
         phone: organization.phone,
+        organizationType: organization.organizationType as OrganizationType,
         isActive: organization.isActive,
         createdAt: organization.createdAt,
         updatedAt: organization.updatedAt,

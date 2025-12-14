@@ -1,5 +1,12 @@
-import { IsString, IsOptional, MinLength, MaxLength, IsEmail, IsUrl, IsBoolean } from 'class-validator';
+import { IsString, IsOptional, MinLength, MaxLength, IsEmail, IsUrl, IsBoolean, IsEnum } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+
+export enum OrganizationType {
+  Group = 'Group',
+  Team = 'Team',
+  Organization = 'Organization',
+  Enterprise = 'Enterprise',
+}
 
 export class CreateOrganizationDto {
   @ApiProperty({
@@ -48,6 +55,16 @@ export class CreateOrganizationDto {
   @IsString()
   @MaxLength(20)
   phone?: string;
+
+  @ApiProperty({
+    example: 'Group',
+    description: 'Organization type based on size',
+    enum: OrganizationType,
+    required: false,
+  })
+  @IsOptional()
+  @IsEnum(OrganizationType)
+  organizationType?: OrganizationType;
 }
 
 export class UpdateOrganizationDto {
@@ -101,6 +118,16 @@ export class UpdateOrganizationDto {
   phone?: string;
 
   @ApiProperty({
+    example: 'Team',
+    description: 'Organization type based on size',
+    enum: OrganizationType,
+    required: false,
+  })
+  @IsOptional()
+  @IsEnum(OrganizationType)
+  organizationType?: OrganizationType;
+
+  @ApiProperty({
     example: true,
     description: 'Organization active status',
     required: false,
@@ -150,6 +177,13 @@ export class OrganizationResponseDto {
     nullable: true,
   })
   phone: string | null;
+
+  @ApiProperty({
+    example: 'Group',
+    description: 'Organization type based on size (Group: <30, Team: 30-100, Organization: 100-1000, Enterprise: 1000+)',
+    enum: OrganizationType,
+  })
+  organizationType: OrganizationType;
 
   @ApiProperty({
     example: true,

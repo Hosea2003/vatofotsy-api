@@ -20,6 +20,13 @@ export class Organization {
   @Column({ nullable: true })
   phone: string;
 
+  @Column({
+    type: 'enum',
+    enum: ['Group', 'Team', 'Organization', 'Enterprise'],
+    default: 'Group'
+  })
+  organizationType: 'Group' | 'Team' | 'Organization' | 'Enterprise';
+
   @Column({ default: true })
   isActive: boolean;
 

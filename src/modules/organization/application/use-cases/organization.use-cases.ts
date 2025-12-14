@@ -11,6 +11,7 @@ export class CreateOrganizationUseCase {
     website?: string,
     email?: string,
     phone?: string,
+    organizationType?: 'Group' | 'Team' | 'Organization' | 'Enterprise',
   ) {
     return await this.organizationDomainService.createOrganization(
       name,
@@ -18,6 +19,7 @@ export class CreateOrganizationUseCase {
       website,
       email,
       phone,
+      organizationType,
     );
   }
 }
@@ -55,6 +57,7 @@ export class UpdateOrganizationUseCase {
     website?: string,
     email?: string,
     phone?: string,
+    organizationType?: 'Group' | 'Team' | 'Organization' | 'Enterprise',
     isActive?: boolean,
   ) {
     return await this.organizationDomainService.updateOrganization(
@@ -64,6 +67,7 @@ export class UpdateOrganizationUseCase {
       website,
       email,
       phone,
+      organizationType,
       isActive,
     );
   }
