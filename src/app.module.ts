@@ -8,6 +8,7 @@ import jwtConfig from './config/jwt.config';
 import { UsersModule } from './modules/user/users.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { OrganizationModule } from './modules/organization/organization.module';
+import { PollModule } from './modules/poll/poll.module';
 import { JwtAuthGuard } from './modules/auth/guards/jwt-auth.guard';
 
 @Module({
@@ -23,6 +24,7 @@ import { JwtAuthGuard } from './modules/auth/guards/jwt-auth.guard';
     UsersModule,
     AuthModule,
     OrganizationModule,
+    PollModule,
   ],
   controllers: [],
   providers: [
