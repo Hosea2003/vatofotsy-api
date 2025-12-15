@@ -7,5 +7,5 @@ export * from './infrastructure/entities/poll.entity';
 export { PollChoice } from './infrastructure/entities/poll-choice.entity';
 export * from './infrastructure/entities/poll-vote.entity';
 export { PollChoiceMedia } from './infrastructure/entities/poll-choice-media.entity';
-export * from './presentation/controllers/poll-file.controller';
+
 export * from './poll.tokens';

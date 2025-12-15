@@ -5,7 +5,6 @@ import { PollChoice } from './infrastructure/entities/poll-choice.entity';
 import { PollVote } from './infrastructure/entities/poll-vote.entity';
 import { PollChoiceMedia } from './infrastructure/entities/poll-choice-media.entity';
 import { PollController } from './presentation/controllers/poll.controller';
-import { PollFileController } from './presentation/controllers/poll-file.controller';
 import { PollChoiceController } from './presentation/controllers/poll-choice.controller';
 import { PollDomainService } from './domain/services/poll-domain.service';
 import {
@@ -28,7 +27,7 @@ import { POLL_REPOSITORY, POLL_CHOICE_REPOSITORY, POLL_VOTE_REPOSITORY, POLL_CHO
 
 @Module({
   imports: [TypeOrmModule.forFeature([Poll, PollChoice, PollVote, PollChoiceMedia])],
-  controllers: [PollController, PollFileController, PollChoiceController],
+  controllers: [PollController, PollChoiceController],
   providers: [
     // Domain Services
     PollDomainService,
