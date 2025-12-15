@@ -81,7 +81,6 @@ export class PollController {
         votingEndsAt,
         createPollDto.type,
         createPollDto.resultDisplayType,
-        [], // Empty choices array for now
         createPollDto.description,
         createPollDto.organizationId,
         createPollDto.allowMultipleChoices || false,
@@ -130,8 +129,7 @@ export class PollController {
     } catch (error) {
       if (
         error.message === 'Organization ID is required for private polls' ||
-        error.message === 'Voting end time must be in the future' ||
-        error.message === 'A poll must have at least 2 choices'
+        error.message === 'Voting end time must be in the future'
       ) {
         throw new BadRequestException(error.message);
       }

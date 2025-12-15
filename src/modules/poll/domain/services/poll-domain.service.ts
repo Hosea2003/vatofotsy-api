@@ -31,7 +31,6 @@ export class PollDomainService {
     description?: string,
     organizationId?: string,
     allowMultipleChoices: boolean = false,
-    choices: Partial<PollChoice>[] = [],
   ): Promise<Poll> {
     // Validate poll data
     if (type === PollType.PRIVATE && !organizationId) {
@@ -42,11 +41,7 @@ export class PollDomainService {
       throw new Error('Voting end time must be in the future');
     }
 
-    if (choices.length < 2) {
-      throw new Error('A poll must have at least 2 choices');
-    }
-
-    // Create poll
+    // Create poll without choices
     const pollData = {
       title,
       description,
@@ -62,22 +57,8 @@ export class PollDomainService {
 
     const poll = await this.pollRepository.create(pollData);
 
-    // Create choices
-    const choicesWithPollId = choices.map((choice, index) => ({
-      ...choice,
-      pollId: poll.id,
-      order: index,
-    }));
-
-    await this.pollChoiceRepository.bulkCreate(choicesWithPollId);
-
-    // Fetch the complete poll with choices
-    const completePoll = await this.pollRepository.findById(poll.id);
-    if (!completePoll) {
-      throw new Error('Failed to create poll');
-    }
-
-    return completePoll;
+    // Return the poll (choices will be added separately)
+    return poll;
   }
 
   async activatePoll(pollId: string, userId: string): Promise<Poll> {

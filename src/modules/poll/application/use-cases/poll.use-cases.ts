@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PollDomainService } from '../../domain/services/poll-domain.service';
 import { PollType, ResultDisplayType } from '../../infrastructure/entities/poll.entity';
-import { PollChoice } from '../../infrastructure/entities/poll-choice.entity';
 
 @Injectable()
 export class CreatePollUseCase {
@@ -13,7 +12,6 @@ export class CreatePollUseCase {
     votingEndsAt: Date,
     type: PollType,
     resultDisplayType: ResultDisplayType,
-    choices: Partial<PollChoice>[],
     description?: string,
     organizationId?: string,
     allowMultipleChoices: boolean = false,
@@ -27,7 +25,6 @@ export class CreatePollUseCase {
       description,
       organizationId,
       allowMultipleChoices,
-      choices,
     );
   }
 }
