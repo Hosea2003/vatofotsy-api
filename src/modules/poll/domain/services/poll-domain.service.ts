@@ -46,7 +46,7 @@ export class PollDomainService {
       title,
       description,
       createdBy,
-      organizationId,
+      organizationId: organizationId && organizationId.trim() !== '' ? organizationId : undefined,
       type,
       resultDisplayType,
       votingEndsAt,
