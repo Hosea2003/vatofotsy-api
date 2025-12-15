@@ -19,6 +19,7 @@ import {
   ApiOperation,
   ApiResponse,
   ApiParam,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import {
   CreatePollUseCase,
@@ -40,6 +41,7 @@ import type { AuthenticatedUser } from '../../../auth';
 import { PollType, ResultDisplayType } from '../../infrastructure/entities/poll.entity';
 
 @ApiTags('polls')
+@ApiBearerAuth('JWT-auth')
 @Controller('polls')
 export class PollController {
   constructor(

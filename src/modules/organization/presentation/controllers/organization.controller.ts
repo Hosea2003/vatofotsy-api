@@ -19,6 +19,7 @@ import {
   ApiOperation,
   ApiResponse,
   ApiParam,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import {
   CreateOrganizationUseCase,
@@ -38,6 +39,7 @@ import {
 } from '../dto';
 
 @ApiTags('organizations')
+@ApiBearerAuth('JWT-auth')
 @Controller('organizations')
 export class OrganizationController {
   constructor(

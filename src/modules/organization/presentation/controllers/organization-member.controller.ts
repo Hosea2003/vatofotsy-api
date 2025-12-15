@@ -20,6 +20,7 @@ import {
   ApiOperation,
   ApiResponse,
   ApiParam,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import {
   InviteUserToOrganizationUseCase,
@@ -41,6 +42,7 @@ import { CurrentUser } from '../../../auth';
 import type { AuthenticatedUser } from '../../../auth';
 
 @ApiTags('organization-members')
+@ApiBearerAuth('JWT-auth')
 @Controller('organizations/:organizationId/members')
 export class OrganizationMemberController {
   constructor(
@@ -273,6 +275,7 @@ export class OrganizationMemberController {
 }
 
 @ApiTags('user-organizations')
+@ApiBearerAuth('JWT-auth')
 @Controller('users/me/organizations')
 export class UserOrganizationController {
   constructor(

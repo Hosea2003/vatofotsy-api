@@ -21,6 +21,7 @@ import {
   ApiParam,
   ApiConsumes,
   ApiBody,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { LocalFileUploadService } from '../../infrastructure/adapters/local-file-upload.service';
 import { PollChoiceMediaService } from '../../application/services/poll-choice-media.service';
@@ -45,6 +46,7 @@ interface MulterFile {
 }
 
 @ApiTags('poll-files')
+@ApiBearerAuth('JWT-auth')
 @Controller('polls')
 export class PollFileController {
   constructor(

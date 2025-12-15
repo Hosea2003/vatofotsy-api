@@ -19,6 +19,7 @@ import {
   ApiOperation,
   ApiResponse,
   ApiParam,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { CreateUserUseCase, GetUserByIdUseCase, UpdateUserProfileUseCase } from '../../application/use-cases/user.use-cases';
 import { CreateUserDto, UpdateUserDto, ChangePasswordDto, UserResponseDto, ErrorResponseDto } from '../dto';
@@ -26,6 +27,7 @@ import { Public, CurrentUser } from '../../../auth';
 import type { AuthenticatedUser } from '../../../auth';
 
 @ApiTags('users')
+@ApiBearerAuth('JWT-auth')
 @Controller('users')
 export class UserController {
   constructor(
