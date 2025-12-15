@@ -135,14 +135,6 @@ export class CreatePollDto {
   @IsString()
   mainImageFileName?: string;
 
-  @ApiProperty({
-    type: [CreatePollChoiceDto],
-    description: 'Poll choices',
-  })
-  @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => CreatePollChoiceDto)
-  choices: CreatePollChoiceDto[];
 }
 
 export class PollChoiceResponseDto {

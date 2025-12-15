@@ -79,7 +79,7 @@ export class PollController {
         votingEndsAt,
         createPollDto.type,
         createPollDto.resultDisplayType,
-        createPollDto.choices,
+        [], // Empty choices array for now
         createPollDto.description,
         createPollDto.organizationId,
         createPollDto.allowMultipleChoices || false,
