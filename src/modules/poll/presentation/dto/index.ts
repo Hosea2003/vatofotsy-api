@@ -56,6 +56,29 @@ export class CreatePollChoiceDto {
   mediaFileName?: string;
 }
 
+export class UpdatePollChoiceDto {
+  @ApiProperty({
+    example: 'Updated Option A',
+    description: 'Choice name',
+    required: false,
+  })
+  @IsOptional()
+  @IsString()
+  @MinLength(1)
+  @MaxLength(200)
+  name?: string;
+
+  @ApiProperty({
+    example: 'Updated description for option A',
+    description: 'Choice description',
+    required: false,
+  })
+  @IsOptional()
+  @IsString()
+  @MaxLength(1000)
+  description?: string;
+}
+
 export class CreatePollDto {
   @ApiProperty({
     example: 'What is your favorite programming language?',
@@ -187,10 +210,22 @@ export class PollChoiceResponseDto {
   voteCount?: number;
 
   @ApiProperty({
+    example: 0,
+    description: 'Display order of the choice',
+  })
+  order: number;
+
+  @ApiProperty({
     example: '2023-01-01T00:00:00Z',
     description: 'Creation date',
   })
   createdAt: Date;
+
+  @ApiProperty({
+    description: 'Media files for this choice',
+    required: false,
+  })
+  media?: any[];
 
   constructor(data: Partial<PollChoiceResponseDto>) {
     Object.assign(this, data);

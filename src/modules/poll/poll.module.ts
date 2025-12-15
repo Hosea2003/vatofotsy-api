@@ -6,6 +6,7 @@ import { PollVote } from './infrastructure/entities/poll-vote.entity';
 import { PollChoiceMedia } from './infrastructure/entities/poll-choice-media.entity';
 import { PollController } from './presentation/controllers/poll.controller';
 import { PollFileController } from './presentation/controllers/poll-file.controller';
+import { PollChoiceController } from './presentation/controllers/poll-choice.controller';
 import { PollDomainService } from './domain/services/poll-domain.service';
 import {
   CreatePollUseCase,
@@ -22,17 +23,19 @@ import { TypeOrmPollVoteRepository } from './infrastructure/adapters/poll-vote.r
 import { TypeOrmPollChoiceMediaRepository } from './infrastructure/repositories/poll-choice-media.repository';
 import { LocalFileUploadService } from './infrastructure/adapters/local-file-upload.service';
 import { PollChoiceMediaService } from './application/services/poll-choice-media.service';
+import { PollChoiceService } from './application/services/poll-choice.service';
 import { POLL_REPOSITORY, POLL_CHOICE_REPOSITORY, POLL_VOTE_REPOSITORY, POLL_CHOICE_MEDIA_REPOSITORY, FILE_UPLOAD_SERVICE } from './poll.tokens';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Poll, PollChoice, PollVote, PollChoiceMedia])],
-  controllers: [PollController, PollFileController],
+  controllers: [PollController, PollFileController, PollChoiceController],
   providers: [
     // Domain Services
     PollDomainService,
     
     // Application Services
     PollChoiceMediaService,
+    PollChoiceService,
     
     // Use Cases
     CreatePollUseCase,
