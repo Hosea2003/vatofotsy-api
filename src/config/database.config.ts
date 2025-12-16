@@ -3,14 +3,13 @@ import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 
 export default registerAs('database', (): TypeOrmModuleOptions => ({
   type: 'postgres',
-  host: process.env.DATABASE_HOST || 'localhost',
-  port: parseInt(process.env.DATABASE_PORT || '5432', 10),
-  username: process.env.DATABASE_USERNAME || 'postgres',
-  password: process.env.DATABASE_PASSWORD || 'password',
-  database: process.env.DATABASE_NAME || 'vatofotsy_db',
+  url: process.env.DATABASE_URL || 'postgresql://postgres:password@localhost:5432/vatofotsy_db',
   entities: ['dist/**/*.entity{.ts,.js}'],
   migrations: ['dist/migrations/*{.ts,.js}'],
   migrationsTableName: 'migrations',
   synchronize: false,
   logging: process.env.NODE_ENV === 'development',
+  ssl: process.env.DATABASE_SSL === 'true' ? {
+    rejectUnauthorized: false
+  } : false,
 }));
