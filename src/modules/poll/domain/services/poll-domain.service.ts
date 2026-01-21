@@ -214,4 +214,54 @@ export class PollDomainService {
     // For now, we'll just implement the logic
     // TODO: Implement scheduled job to update expired polls
   }
+
+  // Voting logic
+  async votePoll(
+    pollId: string,
+    userId: string,
+    choiceId: string,
+  ): Promise<void> {
+    // 1. Get the poll
+    const poll = await this.pollRepository.findById(pollId);
+    if (!poll) {
+      throw new Error('Poll not found');
+    }
+
+    // 2. Validate poll is active and not ended
+    if (poll.status !== PollStatus.ACTIVE) {
+      throw new Error('Cannot vote on inactive poll');
+    }
+
+    if (!poll.isActive) {
+      throw new Error('Poll is not active');
+    }
+
+    if (new Date() >= poll.votingEndsAt) {
+      throw new Error('Poll voting has ended');
+    }
+
+    // 3. Validate choice exists and belongs to the poll
+    const choice = await this.pollChoiceRepository.findById(choiceId);
+    if (!choice) {
+      throw new Error('Poll choice not found');
+    }
+
+    if (choice.pollId !== pollId) {
+      throw new Error('Choice does not belong to this poll');
+    }
+
+    // 4. Check if user has already voted
+    const existingVotes = await this.pollVoteRepository.findByPollAndUser(pollId, userId);
+    
+    if (existingVotes.length > 0) {
+      throw new Error('You have already voted on this poll');
+    }
+
+    // 5. Create the vote
+    await this.pollVoteRepository.create({
+      pollId,
+      choiceId,
+      userId,
+    });
+  }
 }

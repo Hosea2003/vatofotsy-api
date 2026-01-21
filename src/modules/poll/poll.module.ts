@@ -15,6 +15,7 @@ import {
   GetUserPollsUseCase,
   UpdatePollUseCase,
   DeletePollUseCase,
+  VotePollUseCase,
 } from './application/use-cases/poll.use-cases';
 import { TypeOrmPollRepository } from './infrastructure/adapters/poll.repository';
 import { TypeOrmPollChoiceRepository } from './infrastructure/adapters/poll-choice.repository';
@@ -44,6 +45,7 @@ import { POLL_REPOSITORY, POLL_CHOICE_REPOSITORY, POLL_VOTE_REPOSITORY, POLL_CHO
     GetUserPollsUseCase,
     UpdatePollUseCase,
     DeletePollUseCase,
+    VotePollUseCase,
     
     // Repositories
     {
@@ -79,6 +81,7 @@ import { POLL_REPOSITORY, POLL_CHOICE_REPOSITORY, POLL_VOTE_REPOSITORY, POLL_CHO
     GetUserPollsUseCase,
     UpdatePollUseCase,
     DeletePollUseCase,
+    VotePollUseCase,
   ],
 })
 export class PollModule {}

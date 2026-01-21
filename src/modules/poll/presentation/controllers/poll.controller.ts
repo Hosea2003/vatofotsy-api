@@ -29,12 +29,15 @@ import {
   GetUserPollsUseCase,
   UpdatePollUseCase,
   DeletePollUseCase,
+  VotePollUseCase,
 } from '../../application/use-cases/poll.use-cases';
 import {
   CreatePollDto,
   PollResponseDto,
   PollChoiceResponseDto,
   ErrorResponseDto,
+  VotePollDto,
+  VotePollResponseDto,
 } from '../dto';
 import { CurrentUser } from '../../../auth';
 import type { AuthenticatedUser } from '../../../auth';
@@ -52,6 +55,7 @@ export class PollController {
     private readonly getUserPollsUseCase: GetUserPollsUseCase,
     private readonly updatePollUseCase: UpdatePollUseCase,
     private readonly deletePollUseCase: DeletePollUseCase,
+    private readonly votePollUseCase: VotePollUseCase,
   ) {}
 
   @Post()
@@ -407,6 +411,60 @@ export class PollController {
       }
       if (error.message === 'Only poll creator can delete the poll') {
         throw new UnauthorizedException('Only poll creator can delete the poll');
+      }
+      throw error;
+    }
+  }
+
+  @Post(':pollId/vote')
+  @HttpCode(HttpStatus.OK)
+  @UsePipes(new ValidationPipe({ transform: true, whitelist: true }))
+  @ApiOperation({ summary: 'Vote for a poll choice' })
+  @ApiParam({
+    name: 'pollId',
+    description: 'Poll ID',
+    example: '123e4567-e89b-12d3-a456-426614174000',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Vote recorded successfully.',
+    type: VotePollResponseDto,
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Invalid input or voting not allowed.',
+    type: ErrorResponseDto,
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: 'Poll or choice not found.',
+    type: ErrorResponseDto,
+  })
+  async votePoll(
+    @Param('pollId') pollId: string,
+    @Body() votePollDto: VotePollDto,
+    @CurrentUser() user: AuthenticatedUser,
+  ): Promise<VotePollResponseDto> {
+    try {
+      await this.votePollUseCase.execute(pollId, user.userId, votePollDto.choiceId);
+      
+      return {
+        message: 'Vote recorded successfully',
+        pollId,
+        choiceId: votePollDto.choiceId,
+      };
+    } catch (error) {
+      if (error.message === 'Poll not found' || error.message === 'Poll choice not found') {
+        throw new NotFoundException(error.message);
+      }
+      if (
+        error.message === 'Cannot vote on inactive poll' ||
+        error.message === 'Poll is not active' ||
+        error.message === 'Poll voting has ended' ||
+        error.message === 'You have already voted on this poll' ||
+        error.message === 'Choice does not belong to this poll'
+      ) {
+        throw new BadRequestException(error.message);
       }
       throw error;
     }

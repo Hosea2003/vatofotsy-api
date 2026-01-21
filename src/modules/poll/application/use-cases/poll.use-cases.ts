@@ -105,3 +105,12 @@ export class DeletePollUseCase {
     await this.pollDomainService.deletePoll(pollId, userId);
   }
 }
+
+@Injectable()
+export class VotePollUseCase {
+  constructor(private readonly pollDomainService: PollDomainService) {}
+
+  async execute(pollId: string, userId: string, choiceId: string): Promise<void> {
+    await this.pollDomainService.votePoll(pollId, userId, choiceId);
+  }
+}

@@ -6,6 +6,7 @@ import { MediaType } from '../../infrastructure/entities/poll-choice.entity';
 
 // Export file upload DTOs
 export * from './file-upload.dto';
+export * from './vote.dto';
 
 export class CreatePollChoiceDto {
   @ApiProperty({
